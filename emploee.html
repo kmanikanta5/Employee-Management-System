@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            margin-bottom: 10px;
+        }
+        h3 {
+            text-align: center;
+            color: #333;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            margin-top: 0;
+        }
+        .form-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .form-container input {
+            width: 18%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .action-buttons button {
+            padding: 5px 10px;
+            margin-right: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .action-buttons .edit-btn {
+            background-color: #ffc107;
+            color: #fff;
+        }
+        .action-buttons .edit-btn:hover {
+            background-color: #e0a800;
+        }
+        .action-buttons .delete-btn {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .action-buttons .delete-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Employee Management System</h1>
+        <h3>created by Korrapati Manikanta</h3>
+        <div class="form-container">
+            <input type="text" id="name" placeholder="Name">
+            <input type="text" id="position" placeholder="Position">
+            <input type="text" id="department" placeholder="Department">
+            <input type="number" id="salary" placeholder="Salary">
+            <button onclick="addEmployee()">Add Employee</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Department</th>
+                    <th>Salary</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="employeeTableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let employees = [];
+        let currentId = 1;
+        let deletedIds = [];
+
+        function addEmployee() {
+            const name = document.getElementById('name').value;
+            const position = document.getElementById('position').value;
+            const department = document.getElementById('department').value;
+            const salary = document.getElementById('salary').value;
+
+            if (name && position && department && salary) {
+                let id;
+                if (deletedIds.length > 0) {
+                    id = deletedIds.pop();
+                } else {
+                    id = currentId++;
+                }
+
+                const employee = {
+                    id,
+                    name,
+                    position,
+                    department,
+                    salary
+                };
+
+                employees.push(employee);
+                displayEmployees();
+                clearForm();
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+
+        function displayEmployees() {
+            const tableBody = document.getElementById('employeeTableBody');
+            tableBody.innerHTML = '';
+
+            employees.forEach(employee => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${employee.id}</td>
+                    <td>${employee.name}</td>
+                    <td>${employee.position}</td>
+                    <td>${employee.department}</td>
+                    <td>${employee.salary}</td>
+                    <td class="action-buttons">
+                        <button class="edit-btn" onclick="editEmployee(${employee.id})">Edit</button>
+                        <button class="delete-btn" onclick="deleteEmployee(${employee.id})">Delete</button>
+                    </td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        function clearForm() {
+            document.getElementById('name').value = '';
+            document.getElementById('position').value = '';
+            document.getElementById('department').value = '';
+            document.getElementById('salary').value = '';
+        }
+
+        function editEmployee(id) {
+            const employee = employees.find(emp => emp.id === id);
+            if (employee) {
+                document.getElementById('name').value = employee.name;
+                document.getElementById('position').value = employee.position;
+                document.getElementById('department').value = employee.department;
+                document.getElementById('salary').value = employee.salary;
+                deleteEmployee(id);
+            }
+        }
+
+        function deleteEmployee(id) {
+            employees = employees.filter(emp => emp.id !== id);
+            deletedIds.push(id);
+            displayEmployees();
+        }
+
+        displayEmployees();
+    </script>
+</body>
+</html>
